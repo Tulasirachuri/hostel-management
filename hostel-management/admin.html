@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>HostelMS — Warden Admin Panel</title>
+  <link rel="stylesheet" href="admin.css" />
+</head>
+<body>
+
+<!-- ===== ADMIN LOGIN ===== -->
+<div id="adminLoginView" class="al-wrap">
+  <div class="al-card">
+    <div class="al-badge">ADMIN</div>
+    <div class="al-title">Warden Portal</div>
+    <div class="al-sub">HostelMS Administration Panel</div>
+    <div class="al-field">
+      <label>Admin Email</label>
+      <input type="email" id="adminEmail" placeholder="warden@university.edu" />
+    </div>
+    <div class="al-field">
+      <label>Password</label>
+      <input type="password" id="adminPass" placeholder="Enter password" />
+    </div>
+    <p class="al-error" id="adminError">Invalid credentials. Please try again.</p>
+    <button class="al-btn" onclick="adminLogin()">Sign In as Warden</button>
+    <div class="al-hint">
+      <strong>Demo:</strong> warden@university.edu / admin123
+    </div>
+    <a href="index.html" class="al-link">← Back to Student Portal</a>
+  </div>
+</div>
+
+<!-- ===== ADMIN DASHBOARD ===== -->
+<div id="adminDash" class="adash" style="display:none;">
+
+  <!-- Topbar -->
+  <div class="a-topbar">
+    <div class="a-topbar-left">
+      <span class="a-logo">🏠</span>
+      <span class="a-title">HostelMS</span>
+      <span class="a-role-badge">Warden</span>
+    </div>
+    <div class="a-topbar-right">
+      <span class="a-warden-name" id="wardenName">Dr. Meena Iyer</span>
+      <div class="a-avatar" id="wardenAvatar">MI</div>
+      <button class="a-logout" onclick="adminLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="adash-body">
+
+    <!-- Sidebar -->
+    <div class="a-sidebar">
+      <div class="a-nav active" data-page="dashboard" onclick="aShowPage('dashboard',this)">
+        <span>📊</span><span class="a-nav-label">Dashboard</span>
+      </div>
+      <div class="a-nav" data-page="students" onclick="aShowPage('students',this)">
+        <span>👥</span><span class="a-nav-label">Students</span>
+      </div>
+      <div class="a-nav" data-page="bills" onclick="aShowPage('bills',this)">
+        <span>🧾</span><span class="a-nav-label">Mess Bills</span>
+      </div>
+      <div class="a-nav" data-page="notices" onclick="aShowPage('notices',this)">
+        <span>📢</span><span class="a-nav-label">Notices</span>
+      </div>
+      <div class="a-nav" data-page="rooms" onclick="aShowPage('rooms',this)">
+        <span>🏨</span><span class="a-nav-label">Rooms</span>
+      </div>
+    </div>
+
+    <!-- Main -->
+    <div class="a-main">
+
+      <!-- ── DASHBOARD PAGE ── -->
+      <div class="a-page active" id="apage-dashboard">
+        <div class="a-page-title">Overview</div>
+        <p class="a-page-sub">Hostel at a glance</p>
+        <div class="a-metrics" id="adminMetrics"></div>
+        <div class="a-two-col">
+          <div class="a-card">
+            <div class="a-card-title">Overdue Bills</div>
+            <table class="a-table" id="overdueTable">
+              <thead><tr><th>Student</th><th>Month</th><th>Amount</th></tr></thead>
+              <tbody id="overdueBody"></tbody>
+            </table>
+          </div>
+          <div class="a-card">
+            <div class="a-card-title">Recent Notices</div>
+            <div id="recentNoticesAdmin"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STUDENTS PAGE ── -->
+      <div class="a-page" id="apage-students">
+        <div class="a-page-header">
+          <div>
+            <div class="a-page-title">Students</div>
+            <p class="a-page-sub">Manage all registered students</p>
+          </div>
+          <button class="a-primary-btn" onclick="openAddStudent()">+ Add Student</button>
+        </div>
+        <div class="a-card">
+          <div class="a-search-row">
+            <input type="text" id="studentSearch" placeholder="🔍  Search by name, email, room…" oninput="renderStudentsTable()" class="a-search" />
+          </div>
+          <table class="a-table" id="studentsTable">
+            <thead>
+              <tr>
+                <th>Name</th><th>Roll No.</th><th>Hostel</th><th>Room</th>
+                <th>Course</th><th>Due</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="studentsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── BILLS PAGE ── -->
+      <div class="a-page" id="apage-bills">
+        <div class="a-page-header">
+          <div>
+            <div class="a-page-title">Mess Bills</div>
+            <p class="a-page-sub">Add and manage mess billing for all students</p>
+          </div>
+          <button class="a-primary-btn" onclick="openAddBill()">+ Add Bill</button>
+        </div>
+        <div class="a-card">
+          <div class="a-search-row">
+            <select id="billStudentFilter" onchange="renderBillsTable()" class="a-select">
+              <option value="">All Students</option>
+            </select>
+            <select id="billStatusFilter" onchange="renderBillsTable()" class="a-select">
+              <option value="">All Statuses</option>
+              <option value="paid">Paid</option>
+              <option value="pending">Pending</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+          <table class="a-table">
+            <thead>
+              <tr>
+                <th>Student</th><th>Month</th><th>Breakfast</th>
+                <th>Lunch</th><th>Dinner</th><th>Total</th><th>Status</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="billsBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── NOTICES PAGE ── -->
+      <div class="a-page" id="apage-notices">
+        <div class="a-page-header">
+          <div>
+            <div class="a-page-title">Notices</div>
+            <p class="a-page-sub">Post and manage hostel announcements</p>
+          </div>
+          <button class="a-primary-btn" onclick="openAddNotice()">+ Post Notice</button>
+        </div>
+        <div id="noticesAdminList"></div>
+      </div>
+
+      <!-- ── ROOMS PAGE ── -->
+      <div class="a-page" id="apage-rooms">
+        <div class="a-page-title">Room Allocation</div>
+        <p class="a-page-sub">View current room assignments across all blocks</p>
+        <div id="roomsGrid"></div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- ===== MODALS ===== -->
+
+<!-- Add/Edit Student Modal -->
+<div class="modal-overlay" id="studentModal" onclick="closeModal('studentModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span id="studentModalTitle">Add New Student</span>
+      <button class="modal-close" onclick="closeModal('studentModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editStudentId" />
+      <div class="m-grid">
+        <div class="m-field"><label>Full Name</label><input id="f_name" placeholder="e.g. Ananya Singh"/></div>
+        <div class="m-field"><label>Roll Number</label><input id="f_roll" placeholder="e.g. 2024CS001"/></div>
+        <div class="m-field"><label>Email</label><input id="f_email" type="email" placeholder="student@university.edu"/></div>
+        <div class="m-field"><label>Password</label><input id="f_pass" type="password" placeholder="Set password"/></div>
+        <div class="m-field"><label>Course</label><input id="f_course" placeholder="e.g. B.Tech CSE"/></div>
+        <div class="m-field"><label>Year</label>
+          <select id="f_year">
+            <option>1st Year</option><option>2nd Year</option>
+            <option>3rd Year</option><option>4th Year</option>
+          </select>
+        </div>
+        <div class="m-field"><label>Hostel Block</label>
+          <select id="f_hostel">
+            <option>Himalaya Block</option><option>Ganga Block</option>
+            <option>Kaveri Block</option><option>Saraswati Block</option>
+          </select>
+        </div>
+        <div class="m-field"><label>Room Number</label><input id="f_room" placeholder="e.g. A-204"/></div>
+        <div class="m-field"><label>Phone</label><input id="f_phone" placeholder="10-digit number"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('studentModal')">Cancel</button>
+      <button class="m-save" onclick="saveStudent()">Save Student</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Bill Modal -->
+<div class="modal-overlay" id="billModal" onclick="closeModal('billModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span id="billModalTitle">Add Mess Bill</span>
+      <button class="modal-close" onclick="closeModal('billModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="editBillStudentId"/>
+      <input type="hidden" id="editBillIndex"/>
+      <div class="m-grid">
+        <div class="m-field" style="grid-column:1/-1"><label>Student</label>
+          <select id="b_student"></select>
+        </div>
+        <div class="m-field" style="grid-column:1/-1"><label>Month</label>
+          <input id="b_month" placeholder="e.g. April 2025"/>
+        </div>
+        <div class="m-field"><label>Breakfast (₹)</label><input id="b_breakfast" type="number" placeholder="0"/></div>
+        <div class="m-field"><label>Lunch (₹)</label><input id="b_lunch" type="number" placeholder="0"/></div>
+        <div class="m-field"><label>Dinner (₹)</label><input id="b_dinner" type="number" placeholder="0"/></div>
+        <div class="m-field"><label>Status</label>
+          <select id="b_status">
+            <option value="pending">Pending</option>
+            <option value="paid">Paid</option>
+            <option value="overdue">Overdue</option>
+          </select>
+        </div>
+      </div>
+      <div class="b-total-row">Total: <strong id="billTotalPreview">₹0</strong></div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('billModal')">Cancel</button>
+      <button class="m-save" onclick="saveBill()">Save Bill</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Notice Modal -->
+<div class="modal-overlay" id="noticeModal" onclick="closeModal('noticeModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span>Post a Notice</span>
+      <button class="modal-close" onclick="closeModal('noticeModal')">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="m-field"><label>Notice Text</label>
+        <textarea id="n_text" rows="3" placeholder="Enter announcement text…" style="width:100%;padding:9px 12px;border:1.5px solid #e0e0e0;border-radius:8px;font-size:14px;resize:vertical;font-family:inherit;"></textarea>
+      </div>
+      <div class="m-field"><label>Priority</label>
+        <select id="n_type">
+          <option value="blue">Normal (Blue)</option>
+          <option value="amber">Warning (Amber)</option>
+          <option value="red">Urgent (Red)</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('noticeModal')">Cancel</button>
+      <button class="m-save" onclick="saveNotice()">Post Notice</button>
+    </div>
+  </div>
+</div>
+
+<!-- View Student Modal -->
+<div class="modal-overlay" id="viewStudentModal" onclick="closeModal('viewStudentModal')">
+  <div class="modal" onclick="event.stopPropagation()">
+    <div class="modal-header">
+      <span>Student Details</span>
+      <button class="modal-close" onclick="closeModal('viewStudentModal')">✕</button>
+    </div>
+    <div class="modal-body" id="viewStudentBody"></div>
+    <div class="modal-footer">
+      <button class="m-cancel" onclick="closeModal('viewStudentModal')">Close</button>
+    </div>
+  </div>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script src="db.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HostelMS – Hostel Management System</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+<!-- ========== LOGIN PAGE ========== -->
+<div id="loginView" class="login-wrap">
+  <div class="login-card">
+    <div class="logo-row">
+      <div class="logo-icon">🏠</div>
+      <div>
+        <div class="login-title">HostelMS</div>
+        <div class="login-subtitle">Hostel Management System</div>
+      </div>
+    </div>
+    <p class="login-desc">Sign in to access your hostel dashboard</p>
+    <div class="field">
+      <label>Student Email</label>
+      <input type="email" id="emailInput" placeholder="you@university.edu" />
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="passInput" placeholder="Enter password" />
+    </div>
+    <p class="error-msg" id="loginError">Invalid email or password. Please try again.</p>
+    <button class="login-btn" onclick="doLogin()">Sign In</button>
+    <a href="admin.html" style="display:block;text-align:center;margin-top:1rem;font-size:13px;color:#185FA5;text-decoration:none;">🔐 Warden Admin Panel →</a>
+    <div class="demo-hint">
+      <strong>Demo accounts:</strong><br />
+      arjun@university.edu &nbsp;/&nbsp; pass123<br />
+      priya@university.edu &nbsp;/&nbsp; pass456<br />
+      rahul@university.edu &nbsp;/&nbsp; pass789
+    </div>
+  </div>
+</div>
+
+<!-- ========== DASHBOARD ========== -->
+<div id="dashView" class="dash" style="display:none;">
+
+  <!-- Top Bar -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <span class="topbar-logo">🏠</span>
+      <span class="topbar-title">HostelMS</span>
+    </div>
+    <div class="topbar-right">
+      <div class="avatar" id="topAvatar">AK</div>
+      <span class="user-name" id="topName">Arjun Kumar</span>
+      <button class="logout-btn" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <!-- Body -->
+  <div class="dash-body">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="nav-item active" onclick="showPage('overview', this)" data-page="overview">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Overview</span>
+      </div>
+      <div class="nav-item" onclick="showPage('bills', this)" data-page="bills">
+        <span class="nav-icon">🧾</span>
+        <span class="nav-label">Mess Bills</span>
+      </div>
+      <div class="nav-item" onclick="showPage('profile', this)" data-page="profile">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Profile</span>
+      </div>
+      <div class="nav-item" onclick="showPage('notices', this)" data-page="notices">
+        <span class="nav-icon">📢</span>
+        <span class="nav-label">Notices</span>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+      <!-- OVERVIEW PAGE -->
+      <div class="page active" id="page-overview">
+        <div class="page-title">Good morning, <span id="studentFirstName">Arjun</span> 👋</div>
+        <p class="page-sub">Here's a summary of your hostel account</p>
+        <div class="metrics-grid">
+          <div class="metric">
+            <div class="metric-label">Room Number</div>
+            <div class="metric-value blue" id="metRoom">A-204</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Hostel Block</div>
+            <div class="metric-value" id="metHostel">Himalaya</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Due Amount</div>
+            <div class="metric-value red" id="metDue">₹1,850</div>
+          </div>
+          <div class="metric">
+            <div class="metric-label">Total Bills</div>
+            <div class="metric-value" id="metCount">5</div>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-title">Recent mess bills</div>
+          <table class="bill-table">
+            <thead>
+              <tr><th>Month</th><th>Amount</th><th>Status</th></tr>
+            </thead>
+            <tbody id="recentBills"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- MESS BILLS PAGE -->
+      <div class="page" id="page-bills">
+        <div class="page-title">Mess Bills</div>
+        <p class="page-sub">Complete billing history for your mess account</p>
+        <div class="card">
+          <div style="overflow-x:auto;">
+            <table class="bill-table">
+              <thead>
+                <tr>
+                  <th>Month</th>
+                  <th>Breakfast</th>
+                  <th>Lunch</th>
+                  <th>Dinner</th>
+                  <th>Total</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="allBills"></tbody>
+            </table>
+          </div>
+          <div class="bill-summary" id="billSummary"></div>
+        </div>
+      </div>
+
+      <!-- PROFILE PAGE -->
+      <div class="page" id="page-profile">
+        <div class="page-title">My Profile</div>
+        <p class="page-sub">Your student and hostel details</p>
+        <div class="card">
+          <div class="profile-avatar-row">
+            <div class="big-avatar" id="profileAvatar">AK</div>
+            <div>
+              <div class="profile-name" id="profileName">Arjun Kumar</div>
+              <div class="profile-email" id="profileEmail">arjun@university.edu</div>
+            </div>
+          </div>
+          <div class="profile-grid" id="profileGrid"></div>
+        </div>
+      </div>
+
+      <!-- NOTICES PAGE -->
+      <div class="page" id="page-notices">
+        <div class="page-title">Notices</div>
+        <p class="page-sub">Hostel announcements and updates</p>
+        <div class="card">
+          <div id="noticeList"></div>
+        </div>
+      </div>
+
+    </div><!-- /main -->
+  </div><!-- /dash-body -->
+</div><!-- /dashView -->
+
+<script src="db.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
